@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64163333243",
+    "project_id": "trading-app-ebf2d",
+    "storage_bucket": "trading-app-ebf2d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64163333243:android:06677eb8ce8b77eeb24ede",
+        "android_client_info": {
+          "package_name": "com.example.paper_trading_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9Gok1JywVSH9lITPGugOgRbUn1ytTnxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
