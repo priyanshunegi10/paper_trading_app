@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:paper_trading_app/firebase_options.dart';
-import 'package:paper_trading_app/pages/home_page/home_page.dart';
+import 'package:paper_trading_app/root_page.dart';
 import 'package:paper_trading_app/provider/auth_provider.dart';
+import 'package:paper_trading_app/provider/nav_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -11,7 +12,10 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => NavProvider()),
+      ],
       child: MyApp(),
     ),
   );
@@ -25,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
-      home: HomePage(),
+      home: RootPage(),
     );
   }
 }
