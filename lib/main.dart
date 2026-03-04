@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:paper_trading_app/firebase_options.dart';
 import 'package:paper_trading_app/root_page.dart';
 import 'package:paper_trading_app/provider/auth_provider.dart';
@@ -28,7 +29,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(useMaterial3: true, primarySwatch: Colors.blue),
+      theme: ThemeData(
+        useMaterial3: true,
+        primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.latoTextTheme(),
+      ),
       home: RootPage(),
     );
   }
