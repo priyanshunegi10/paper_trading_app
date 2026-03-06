@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paper_trading_app/firebase_options.dart';
+import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:paper_trading_app/root_page.dart';
 import 'package:paper_trading_app/provider/auth_provider.dart';
 import 'package:paper_trading_app/provider/nav_provider.dart';
@@ -16,6 +17,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => NavProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider()),
       ],
       child: MyApp(),
     ),

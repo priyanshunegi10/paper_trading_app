@@ -1,6 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:paper_trading_app/pages/home_page/widgets/action_toggle_widget.dart';
+import 'package:paper_trading_app/pages/home_page/widgets/custom_app_bar.dart';
+import 'package:paper_trading_app/pages/home_page/widgets/transactions_widget.dart';
+import 'package:paper_trading_app/pages/home_page/widgets/watchlist_container.dart';
+import 'package:paper_trading_app/provider/dashboard_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,56 +28,7 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 20,
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 25,
-                      child: Image.asset("assets/icons/man.png"),
-                    ),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Hello",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.blueGrey,
-                              ),
-                            ),
-                            SizedBox(width: 5),
-                            Image.asset("assets/icons/hello.png", height: 23),
-                          ],
-                        ),
-                        Text(
-                          "Priyanshu negi",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Spacer(),
-                    CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 25,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Image.asset("assets/icons/bell.png"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              CustomAppBar(),
 
               SizedBox(height: 20),
               Padding(
@@ -96,17 +53,24 @@ class HomePage extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Text(
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 10,
+                              top: 10,
+                              bottom: 10,
+                            ),
+                            child: Text(
                               "USD",
                               style: TextStyle(color: Colors.blueGrey),
                             ),
-                            Icon(Icons.arrow_drop_down, color: Colors.blueGrey),
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.arrow_drop_down),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -124,21 +88,126 @@ class HomePage extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(
-                          0.6,
-                        ), // Semi-transparent safed
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.white.withOpacity(0.8),
-                            width: 1.5,
-                          ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [Color(0xffF9FBFC), Color(0xffDCE6FE)],
                         ),
                       ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(25.0),
                         child: Column(
-                          children: const [
-                            Text("Buttons aur Watchlist yahan aayegi"),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: 25,
+                                left: 25,
+                                right: 25,
+                              ),
+                              child: ActionToggleWidget(
+                                selectedIndex: context
+                                    .watch<DashboardProvider>()
+                                    .currentIndex,
+                                onChanged: (index) {
+                                  context
+                                      .read<DashboardProvider>()
+                                      .updatedIndex(index);
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "WatchList",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  Spacer(),
+                                  Text(
+                                    "See All",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 25),
+                                child: Row(
+                                  children: [
+                                    WatchlistContainer(
+                                      shortFormName: "BTC",
+                                      name: "bitcoin",
+                                      imagePath: "assets/icons/man.png",
+                                      profitOrLoss: "+1.4%",
+                                      currentprice: "\$45,561.50",
+                                    ),
+                                    WatchlistContainer(
+                                      shortFormName: "BTC",
+                                      name: "bitcoin",
+                                      imagePath: "assets/icons/man.png",
+                                      profitOrLoss: "+1.4%",
+                                      currentprice: "\$45,561.50",
+                                    ),
+                                    WatchlistContainer(
+                                      shortFormName: "BTC",
+                                      name: "bitcoin",
+                                      imagePath: "assets/icons/man.png",
+                                      profitOrLoss: "+1.4%",
+                                      currentprice: "\$45,561.50",
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 25,
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Transactions",
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  Text(
+                                    "See All",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.blueGrey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            SizedBox(height: 10),
+
+                            TransactionsWidget(
+                              imagePath: "assets/icons/man.png",
+                              name: "Priyanshu negi",
+                              dateTime: "01 NOV, 2026",
+                              quantity: "0.036",
+                              profitLoss: "-\$100.00",
+                            ),
                           ],
                         ),
                       ),
