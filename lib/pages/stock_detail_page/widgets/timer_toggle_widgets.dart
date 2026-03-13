@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-class ActionToggleWidget extends StatelessWidget {
+class TimerToggleWidgets extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onChanged;
-
-  const ActionToggleWidget({
+  TimerToggleWidgets({
     super.key,
     required this.selectedIndex,
     required this.onChanged,
@@ -12,7 +11,7 @@ class ActionToggleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> options = ['Send', 'Receive', 'Swap'];
+    const List<String> options = ["1H", "1D", "1W", "1M", "1Y"];
     double alignmentX = -1.0 + (2.0 * selectedIndex / (options.length - 1));
     return Container(
       padding: EdgeInsets.all(10),
@@ -33,19 +32,20 @@ class ActionToggleWidget extends StatelessWidget {
           AnimatedAlign(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOutCubic,
-            alignment: Alignment(alignmentX, 0),
+            alignment: Alignment(alignmentX, 0.0),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return Container(
                   width: constraints.maxWidth / options.length,
                   decoration: BoxDecoration(
                     color: const Color(0xFFB1F041),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(25),
                   ),
                 );
               },
             ),
           ),
+
           Row(
             children: List.generate(
               options.length,

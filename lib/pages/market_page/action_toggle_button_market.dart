@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ActionToggleWidget extends StatelessWidget {
+class ActionToggleWidgetMarkrt extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onChanged;
 
-  const ActionToggleWidget({
+  const ActionToggleWidgetMarkrt({
     super.key,
     required this.selectedIndex,
     required this.onChanged,
@@ -12,7 +12,7 @@ class ActionToggleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> options = ['Send', 'Receive', 'Swap'];
+    const List<String> options = ['All', 'Top Gainers', 'Top Losers'];
     double alignmentX = -1.0 + (2.0 * selectedIndex / (options.length - 1));
     return Container(
       padding: EdgeInsets.all(10),

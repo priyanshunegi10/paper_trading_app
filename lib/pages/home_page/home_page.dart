@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/action_toggle_widget.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/custom_app_bar.dart';
@@ -208,6 +207,8 @@ class HomePage extends StatelessWidget {
                               quantity: "0.036",
                               profitLoss: "-\$100.00",
                             ),
+
+                            SizedBox(height: 25),
                           ],
                         ),
                       ),

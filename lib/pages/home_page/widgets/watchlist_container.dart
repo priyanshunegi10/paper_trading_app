@@ -20,7 +20,7 @@ class WatchlistContainer extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 18, vertical: 15),
       margin: EdgeInsets.only(right: 10),
-      height: MediaQuery.of(context).size.height / 3.5,
+      height: 250,
       width: MediaQuery.of(context).size.width / 2,
       decoration: BoxDecoration(
         color: Colors.white,

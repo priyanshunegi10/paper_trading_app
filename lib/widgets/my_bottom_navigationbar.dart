@@ -21,7 +21,6 @@ class MyBottomNavigationbar extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 20),
       height: 70,
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
