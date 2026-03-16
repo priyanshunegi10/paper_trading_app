@@ -34,13 +34,16 @@ class WatchlistContainer extends StatelessWidget {
               Text(
                 shortFormName,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 15,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Spacer(),
-              CircleAvatar(radius: 25, backgroundImage: AssetImage(imagePath)),
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: NetworkImage(imagePath),
+              ),
             ],
           ),
           Text(name),

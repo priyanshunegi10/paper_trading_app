@@ -28,7 +28,7 @@ class StocksCard extends StatelessWidget {
 
       child: Row(
         children: [
-          CircleAvatar(radius: 27, child: Image.asset(imagePath)),
+          CircleAvatar(radius: 27, backgroundImage: NetworkImage(imagePath)),
           SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +38,10 @@ class StocksCard extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
 
-              Text(stockName, style: TextStyle(color: Colors.blueGrey)),
+              Text(
+                stockName,
+                style: TextStyle(color: Colors.blueGrey),
+              ),
             ],
           ),
 

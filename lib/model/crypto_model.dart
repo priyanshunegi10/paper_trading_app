@@ -3,7 +3,7 @@ class CryptoModel {
   String symbol;
   String name;
   String image;
-  double current_pricel;
+  double current_price;
   double price_change_percentage_24h;
 
   CryptoModel({
@@ -11,21 +11,30 @@ class CryptoModel {
     required this.symbol,
     required this.name,
     required this.image,
-    required this.current_pricel,
+    required this.current_price,
     required this.price_change_percentage_24h,
   });
 
-  factory CryptoModel.fromJson(Map<String, dynamic> map) {
+  factory CryptoModel.fromJson(Map<String, dynamic> json) {
     return CryptoModel(
-      id: map["id"],
-      symbol: map["symbol"],
-      name: map["name"],
-      image: map["image"],
-      current_pricel: map["current_pricel"],
-      price_change_percentage_24h: map["price_change_percentage_24h"],
+      id: json["id"],
+      symbol: json["symbol"],
+      name: json["name"],
+      image: json["image"],
+      current_price: (json['current_price'] ?? 0).toDouble(),
+      price_change_percentage_24h: (json['price_change_percentage_24h'] ?? 0)
+          .toDouble(),
     );
   }
 
-
-  
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "symbol": symbol,
+      "name": name,
+      "image": image,
+      "current_price": current_price,
+      "price_change_percentage_24h": price_change_percentage_24h,
+    };
+  }
 }

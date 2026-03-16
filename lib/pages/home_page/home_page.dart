@@ -141,37 +141,48 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 15),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 25),
-                                child: Row(
-                                  children: [
-                                    WatchlistContainer(
-                                      shortFormName: "BTC",
-                                      name: "bitcoin",
-                                      imagePath: "assets/icons/man.png",
-                                      profitOrLoss: "+1.4%",
-                                      currentprice: "\$45,561.50",
-                                    ),
-                                    WatchlistContainer(
-                                      shortFormName: "BTC",
-                                      name: "bitcoin",
-                                      imagePath: "assets/icons/man.png",
-                                      profitOrLoss: "+1.4%",
-                                      currentprice: "\$45,561.50",
-                                    ),
-                                    WatchlistContainer(
-                                      shortFormName: "BTC",
-                                      name: "bitcoin",
-                                      imagePath: "assets/icons/man.png",
-                                      profitOrLoss: "+1.4%",
-                                      currentprice: "\$45,561.50",
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            // Consumer<DashboardProvider>(
+                            //   builder: (context, provider, child) {
+                            //     if (provider.isLoading) {
+                            //       return const Center(
+                            //         child: CircularProgressIndicator(),
+                            //       );
+                            //     }
+
+                            //     if (provider.errorMessage.isNotEmpty) {
+                            //       return Center(
+                            //         child: Text(provider.errorMessage),
+                            //       );
+                            //     }
+
+                            //     if (provider.cryptoList.isEmpty) {
+                            //       return const Center(
+                            //         child: Text("There is no data"),
+                            //       );
+                            //     }
+
+                            //     return SizedBox(
+                            //       height: 180,
+                            //       child: ListView.builder(
+                            //         scrollDirection: Axis.horizontal,
+                            //         padding: const EdgeInsets.only(left: 25),
+                            //         itemCount: provider.cryptoList.length,
+                            //         itemBuilder: (context, index) {
+                            //           final coin = provider.cryptoList[index];
+                            //           return WatchlistContainer(
+                            //             shortFormName: coin.symbol
+                            //                 .toUpperCase(),
+                            //             name: coin.name,
+                            //             profitOrLoss:
+                            //                 "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                            //             imagePath: coin.image,
+                            //             currentprice: "\$${coin.current_price}",
+                            //           );
+                            //         },
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
                             SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.symmetric(

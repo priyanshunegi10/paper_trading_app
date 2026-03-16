@@ -85,37 +85,36 @@ class MarketPage extends StatelessWidget {
                           colors: [Color(0xffF9FBFC), Color(0xffDCE6FE)],
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          StocksCard(
-                            imagePath: "assets/icons/man.png",
-                            shortFormName: "BTC",
-                            stockName: "BitCoin",
-                            stockPrice: "\$45,561.50",
-                            profitLoss: "+1.4%",
-                          ),
-                          StocksCard(
-                            imagePath: "assets/icons/man.png",
-                            shortFormName: "BTC",
-                            stockName: "BitCoin",
-                            stockPrice: "\$45,561.50",
-                            profitLoss: "+1.4%",
-                          ),
-                          StocksCard(
-                            imagePath: "assets/icons/man.png",
-                            shortFormName: "BTC",
-                            stockName: "BitCoin",
-                            stockPrice: "\$45,561.50",
-                            profitLoss: "+1.4%",
-                          ),
-                          StocksCard(
-                            imagePath: "assets/icons/man.png",
-                            shortFormName: "BTC",
-                            stockName: "BitCoin",
-                            stockPrice: "\$45,561.50",
-                            profitLoss: "+1.4%",
-                          ),
-                        ],
+                      child: Consumer<DashboardProvider>(
+                        builder: (context, provider, _) {
+                          if (provider.isLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          }
+
+                          if (provider.errorMessage.isNotEmpty) {
+                            return Center(child: Text(provider.errorMessage));
+                          }
+
+                          if (provider.cryptoList.isEmpty) {
+                            return Center(child: Text("there is no data"));
+                          }
+
+                          return ListView.builder(
+                            itemCount: provider.cryptoList.length,
+                            itemBuilder: (context, index) {
+                              final coin = provider.cryptoList[index];
+
+                              return StocksCard(
+                                imagePath: coin.image,
+                                shortFormName: coin.symbol,
+                                stockName: coin.name,
+                                stockPrice: "\$${coin.current_price}",
+                                profitLoss:
+                                    "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                              );
+                            },
+                          );
+                        },
                       ),
                     ),
                   ),
