@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/action_toggle_widget.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/custom_app_bar.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/transactions_widget.dart';
-import 'package:paper_trading_app/pages/home_page/widgets/watchlist_container.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 

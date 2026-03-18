@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:paper_trading_app/pages/market_page/action_toggle_button_market.dart';
 import 'package:paper_trading_app/pages/market_page/widgets/stocks_card.dart';
@@ -95,24 +94,27 @@ class MarketPage extends StatelessWidget {
                             return Center(child: Text(provider.errorMessage));
                           }
 
-                          if (provider.cryptoList.isEmpty) {
+                          if (provider.currentMarketList.isEmpty) {
                             return Center(child: Text("there is no data"));
                           }
 
-                          return ListView.builder(
-                            itemCount: provider.cryptoList.length,
-                            itemBuilder: (context, index) {
-                              final coin = provider.cryptoList[index];
+                          return SizedBox(
+                            height: double.infinity,
+                            child: ListView.builder(
+                              itemCount: provider.currentMarketList.length,
+                              itemBuilder: (context, index) {
+                                final coin = provider.currentMarketList[index];
 
-                              return StocksCard(
-                                imagePath: coin.image,
-                                shortFormName: coin.symbol,
-                                stockName: coin.name,
-                                stockPrice: "\$${coin.current_price}",
-                                profitLoss:
-                                    "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
-                              );
-                            },
+                                return StocksCard(
+                                  imagePath: coin.image,
+                                  shortFormName: coin.symbol,
+                                  stockName: coin.name,
+                                  stockPrice: "\$${coin.current_price}",
+                                  profitLoss:
+                                      "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                );
+                              },
+                            ),
                           );
                         },
                       ),

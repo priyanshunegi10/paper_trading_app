@@ -21,6 +21,46 @@ class DashboardProvider extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
 
+  List<CryptoModel> get topGaines {
+    List<CryptoModel> gainers = _cryptoModel
+        .where((coin) => coin.price_change_percentage_24h > 0)
+        .toList();
+
+    gainers.sort(
+      (a, b) => b.price_change_percentage_24h.compareTo(
+        a.price_change_percentage_24h,
+      ),
+    );
+
+    return gainers;
+  }
+
+  List<CryptoModel> get topLoser {
+    List<CryptoModel> losers = _cryptoModel
+        .where((coin) => coin.price_change_percentage_24h < 0)
+        .toList();
+
+    losers.sort(
+      (a, b) => b.price_change_percentage_24h.compareTo(
+        a.price_change_percentage_24h,
+      ),
+    );
+
+    return losers;
+  }
+
+  List<CryptoModel> get currentMarketList {
+    if (_currentIndex == 0) {
+      return _cryptoModel;
+    } else if (_currentIndex == 1) {
+      return topGaines;
+    } else if (_currentIndex == 2) {
+      return topLoser;
+    } else {
+      return _cryptoModel;
+    }
+  }
+
   DashboardProvider() {
     fetchMarketData();
   }
