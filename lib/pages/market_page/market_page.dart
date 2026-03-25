@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:paper_trading_app/pages/market_page/action_toggle_button_market.dart';
 import 'package:paper_trading_app/pages/market_page/widgets/stocks_card.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
@@ -72,10 +73,7 @@ class MarketPage extends StatelessWidget {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 20,
-                      ),
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 20),
                       width: double.infinity,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -105,13 +103,52 @@ class MarketPage extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 final coin = provider.currentMarketList[index];
 
-                                return StocksCard(
-                                  imagePath: coin.image,
-                                  shortFormName: coin.symbol,
-                                  stockName: coin.name,
-                                  stockPrice: "\$${coin.current_price}",
-                                  profitLoss:
-                                      "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                return Slidable(
+                                  key: ValueKey(coin.id),
+                                  startActionPane: ActionPane(
+                                    motion: const ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: (context) {
+                                          context
+                                              .read<DashboardProvider>()
+                                              .addToWatchlist(coin.id);
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).clearSnackBars();
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                '${coin.name} Watchlist mein add ho gaya!',
+                                              ),
+                                              backgroundColor:
+                                                  Colors.green.shade700,
+                                              duration: const Duration(
+                                                seconds: 1,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        backgroundColor: const Color(
+                                          0xFF21B7CA,
+                                        ),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.star,
+                                        label: 'Add',
+                                      ),
+                                    ],
+                                  ),
+                                  child: StocksCard(
+                                    imagePath: coin.image,
+                                    shortFormName: coin.symbol,
+                                    stockName: coin.name,
+                                    stockPrice: "\$${coin.current_price}",
+                                    profitLoss:
+                                        "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                  ),
                                 );
                               },
                             ),

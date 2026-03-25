@@ -1,9 +1,12 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/action_toggle_widget.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/custom_app_bar.dart';
 import 'package:paper_trading_app/pages/home_page/widgets/transactions_widget.dart';
+import 'package:paper_trading_app/pages/home_page/widgets/watchlist_container.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
+import 'package:paper_trading_app/services/firebase_storage_services.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -40,10 +43,38 @@ class HomePage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    Text(
-                      "\$100000.00",
-                      style: TextStyle(fontSize: 40, color: Colors.black),
+                    StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseStorageServices().getUserProfile(),
+                      builder: (context, snapshort) {
+                        if (snapshort.connectionState ==
+                            ConnectionState.waiting) {
+                          SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+
+                        if (snapshort.hasData && snapshort.data!.exists) {
+                          double currentBalance = snapshort.data!.get(
+                            'balance',
+                          );
+                          return Text(
+                            "\$${currentBalance.toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 40,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                        return Text(
+                          "\$0.00",
+                          style: TextStyle(fontSize: 40, color: Colors.black),
+                        );
+                      },
                     ),
+
                     Spacer(),
 
                     Container(
@@ -140,48 +171,57 @@ class HomePage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: 15),
-                            // Consumer<DashboardProvider>(
-                            //   builder: (context, provider, child) {
-                            //     if (provider.isLoading) {
-                            //       return const Center(
-                            //         child: CircularProgressIndicator(),
-                            //       );
-                            //     }
 
-                            //     if (provider.errorMessage.isNotEmpty) {
-                            //       return Center(
-                            //         child: Text(provider.errorMessage),
-                            //       );
-                            //     }
+                            Consumer<DashboardProvider>(
+                              builder: (context, provider, _) {
+                                if (provider.errorMessage.isNotEmpty) {
+                                  return Center(
+                                    child: Text(provider.errorMessage),
+                                  );
+                                }
 
-                            //     if (provider.cryptoList.isEmpty) {
-                            //       return const Center(
-                            //         child: Text("There is no data"),
-                            //       );
-                            //     }
+                                if (provider.myWatchlist.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      "you dont have a watchList",
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  );
+                                }
 
-                            //     return SizedBox(
-                            //       height: 180,
-                            //       child: ListView.builder(
-                            //         scrollDirection: Axis.horizontal,
-                            //         padding: const EdgeInsets.only(left: 25),
-                            //         itemCount: provider.cryptoList.length,
-                            //         itemBuilder: (context, index) {
-                            //           final coin = provider.cryptoList[index];
-                            //           return WatchlistContainer(
-                            //             shortFormName: coin.symbol
-                            //                 .toUpperCase(),
-                            //             name: coin.name,
-                            //             profitOrLoss:
-                            //                 "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
-                            //             imagePath: coin.image,
-                            //             currentprice: "\$${coin.current_price}",
-                            //           );
-                            //         },
-                            //       ),
-                            //     );
-                            //   },
-                            // ),
+                                if (provider.isLoading) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+
+                                return SizedBox(
+                                  height: 250,
+                                  child: ListView.builder(
+                                    padding: const EdgeInsets.only(left: 25),
+                                    itemCount: provider.myWatchlist.length,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder: (context, index) {
+                                      final coin = provider.myWatchlist[index];
+
+                                      return WatchlistContainer(
+                                        shortFormName: coin.symbol
+                                            .toUpperCase(),
+                                        name: coin.name,
+                                        profitOrLoss:
+                                            "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                        imagePath: coin.image,
+                                        currentprice: "\$${coin.current_price}",
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                             SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.symmetric(

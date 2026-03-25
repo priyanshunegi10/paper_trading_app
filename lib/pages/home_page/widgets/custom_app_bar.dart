@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:paper_trading_app/services/firebase_storage_services.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
@@ -24,6 +26,17 @@ class CustomAppBar extends StatelessWidget {
                   Image.asset("assets/icons/hello.png", height: 23),
                 ],
               ),
+
+              // StreamBuilder<DocumentSnapshot>(
+              //   stream: FirebaseStorageServices().getUserProfile(),
+              //   builder: (context, snapshort) {
+              //     if (snapshort.connectionState == ConnectionState.waiting) {
+              //       return Center(child: CircularProgressIndicator());
+              //     }
+
+              //     if (snapshort.hasData && snapshort.data!.exists) {
+              //       String _userName = snapshort.data!.get('');
+              //     }
               Text(
                 "Priyanshu negi",
                 style: TextStyle(
@@ -32,6 +45,8 @@ class CustomAppBar extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              //   },
+              // ),
             ],
           ),
           Spacer(),

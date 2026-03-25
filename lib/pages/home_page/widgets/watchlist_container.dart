@@ -51,7 +51,10 @@ class WatchlistContainer extends StatelessWidget {
           Spacer(),
           Text(
             profitOrLoss,
-            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: profitOrLoss.startsWith('-') ? Colors.red : Colors.green,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             currentprice,

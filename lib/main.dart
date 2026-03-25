@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paper_trading_app/firebase_options.dart';
-import 'package:paper_trading_app/provider/dashboard_provider.dart';
+import 'package:paper_trading_app/pages/authentication_page/sign_up.dart';
 import 'package:paper_trading_app/provider/auth_provider.dart';
+import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:paper_trading_app/provider/nav_provider.dart';
 import 'package:paper_trading_app/root_page.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +17,9 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => NavProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => MyAuthProvider()),
       ],
       child: MyApp(),
     ),
@@ -36,7 +38,21 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         textTheme: GoogleFonts.latoTextTheme(),
       ),
-      home: RootPage(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshort) {
+          if (snapshort.hasData) {
+            Future.microtask(
+              () =>
+                  context.read<DashboardProvider>().startListeningToWatchlist(),
+            );
+
+            return const RootPage();
+          } else {
+            return const SignUp();
+          }
+        },
+      ),
     );
   }
 }

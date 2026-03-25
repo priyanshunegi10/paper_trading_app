@@ -5,6 +5,7 @@ class CryptoModel {
   String image;
   double current_price;
   double price_change_percentage_24h;
+  final List<dynamic> sparkLineIn7d;
 
   CryptoModel({
     required this.id,
@@ -13,6 +14,7 @@ class CryptoModel {
     required this.image,
     required this.current_price,
     required this.price_change_percentage_24h,
+    required this.sparkLineIn7d,
   });
 
   factory CryptoModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,8 @@ class CryptoModel {
       current_price: (json['current_price'] ?? 0).toDouble(),
       price_change_percentage_24h: (json['price_change_percentage_24h'] ?? 0)
           .toDouble(),
+
+      sparkLineIn7d: json['sparkLineIn7d']?['price'] ?? [],
     );
   }
 
