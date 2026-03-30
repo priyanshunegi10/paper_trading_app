@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:paper_trading_app/pages/market_page/widgets/minichart.dart';
 
 class WatchlistContainer extends StatelessWidget {
-  String shortFormName;
-  String name;
-  String imagePath;
-  String profitOrLoss;
-  String currentprice;
-  WatchlistContainer({
+  final String shortFormName;
+  final String name;
+  final String imagePath;
+  final String profitOrLoss;
+  final String currentprice;
+  final List<dynamic> sparklineData;
+  final bool isProfit;
+
+  const WatchlistContainer({
     super.key,
     required this.shortFormName,
     required this.name,
     required this.profitOrLoss,
     required this.imagePath,
     required this.currentprice,
+    required this.sparklineData,
+    required this.isProfit,
   });
 
   @override
@@ -47,8 +53,15 @@ class WatchlistContainer extends StatelessWidget {
             ],
           ),
           Text(name),
-
-          Spacer(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: MiniChart(
+                sparklineData: sparklineData,
+                isProfit: isProfit,
+              ),
+            ),
+          ),
           Text(
             profitOrLoss,
             style: TextStyle(

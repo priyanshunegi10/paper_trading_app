@@ -209,6 +209,10 @@ class HomePage extends StatelessWidget {
                                       final coin = provider.myWatchlist[index];
 
                                       return WatchlistContainer(
+                                        isProfit:
+                                            coin.price_change_percentage_24h >
+                                            0,
+                                        sparklineData: coin.sparkline_in_7d,
                                         shortFormName: coin.symbol
                                             .toUpperCase(),
                                         name: coin.name,

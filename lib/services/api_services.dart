@@ -8,9 +8,7 @@ class ApiServices {
   Future<List<CryptoModel>> getData() async {
     try {
       final response = await http.get(
-        Uri.parse(
-          "$baseUrl/coins/markets?vs_currency=usd",
-        ),
+        Uri.parse("$baseUrl/coins/markets?vs_currency=usd&sparkline=true"),
       );
 
       if (response.statusCode == 200) {

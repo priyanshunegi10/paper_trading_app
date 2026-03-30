@@ -1,13 +1,55 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:paper_trading_app/pages/market_page/action_toggle_button_market.dart';
 import 'package:paper_trading_app/pages/market_page/widgets/stocks_card.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
+import 'package:paper_trading_app/provider/nav_provider.dart';
 import 'package:provider/provider.dart';
 
-class MarketPage extends StatelessWidget {
+class MarketPage extends StatefulWidget {
   const MarketPage({super.key});
+
+  @override
+  State<MarketPage> createState() => _MarketPageState();
+}
+
+class _MarketPageState extends State<MarketPage> {
+  Timer? _marketTimer;
+
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<NavProvider>().addListener(_checkAndManageTimer);
+  }
+
+  void _checkAndManageTimer() {
+    final currentIndex = context.read<NavProvider>().currentIndex;
+
+    if (currentIndex == 1) {
+      if (_marketTimer == null || !_marketTimer!.isActive) {
+        context.read<DashboardProvider>().fetchMarketData();
+
+        _marketTimer = Timer.periodic(Duration(seconds: 60), (timer) {
+          context.read<DashboardProvider>().fetchMarketData();
+        });
+      }
+    } else {
+      if (_marketTimer != null && _marketTimer!.isActive) {
+        _marketTimer!.cancel();
+        _marketTimer = null;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _marketTimer?.cancel();
+    context.read<NavProvider>().removeListener(_checkAndManageTimer);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
