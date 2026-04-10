@@ -57,20 +57,26 @@ class FirebaseStorageServices {
         .map((snapshort) => snapshort.docs.map((doc) => doc.id).toList());
   }
 
+  // coin buy karne ka funtion
+
   Future<void> buyCoin(
     String coinId,
     String symbol,
     double coinPrice,
     double quantity,
   ) async {
+    // check user
     User? user = _auth.currentUser;
+    if (user == null) throw Exception("Login fisrt");
 
-    if (user == null) throw Exception("please login fisrt");
+    // DocumentReference address
+    DocumentReference userRef = _db.collection("users.").doc(user.uid);
 
-    DocumentReference userRef = _db.collection("users").doc(user.uid);
-    DocumentReference portfolioRef = _db.collection("portfolio").doc(coinId);
+    // Portfolio user ke andar hona chahiye (Sub-collection)
+    DocumentReference portfolioRef = userRef
+        .collection("portfolio")
+        .doc(coinId);
 
-    //FIREBASE TRANSACTION
     await _db.runTransaction((transaction) async {
       DocumentSnapshot userDoc = await transaction.get(userRef);
 
@@ -79,28 +85,36 @@ class FirebaseStorageServices {
       double currentBalance = (userDoc.get('balance') as num).toDouble();
       double totalCost = coinPrice * quantity;
 
-
-      // check is you have enough money
       if (currentBalance < totalCost) {
-        throw Exception("You dont have enough money");
+        throw Exception("You don't have enough money");
       }
-
-
-      // PAISE KAATO
+      // 1. PAISE KAATO
       double newBalance = currentBalance - totalCost;
       transaction.update(userRef, {'balance': newBalance});
 
-
-      // PORTFOLIO MEIN COIN DAALO
+      // 2. PORTFOLIO MEIN COIN DAALO
       DocumentSnapshot portfolioDoc = await transaction.get(portfolioRef);
 
       if (portfolioDoc.exists) {
-
-        // Agar coin pehle se hai, toh quantity mein add kar
+        // Average Price Calculation (The real math)
         double existingQty = (portfolioDoc.get('quantity') as num).toDouble();
-        transaction.update(portfolioRef, {'quantity': existingQty + quantity});
+        double existingBuyPrice = (portfolioDoc.get('buyPrice') as num)
+            .toDouble();
+
+        // Purani value + Nayi value ko mila kar naya average nikalna
+        double totalExistingValue = existingQty * existingBuyPrice;
+        double totalNewValue = quantity * coinPrice;
+
+        double newTotalQty = existingQty + quantity;
+        double newAveragePrice =
+            (totalExistingValue + totalNewValue) / newTotalQty;
+
+        transaction.update(portfolioRef, {
+          'quantity': newTotalQty,
+          'buyPrice': newAveragePrice, // Naya average price update hoga
+        });
       } else {
-        // Naya coin hai, toh naya record 
+        // Naya coin hai, toh naya record
         transaction.set(portfolioRef, {
           'coinId': coinId,
           'symbol': symbol,
@@ -108,6 +122,59 @@ class FirebaseStorageServices {
           'buyPrice': coinPrice,
           'purchasedAt': FieldValue.serverTimestamp(),
         });
+      }
+    });
+  }
+
+  // sell coin
+  Future<void> sellCoin(
+    String coinId,
+    double currentMarketPrice,
+    double quantityToSell,
+  ) async {
+    User? user = _auth.currentUser;
+    if (user == null) throw Exception("Please login first");
+
+    DocumentReference userRef = _db.collection("users").doc(user.uid);
+    DocumentReference portfolioRef = userRef
+        .collection("portfolio")
+        .doc(coinId);
+
+    // FIREBASE TRANSACTION
+    await _db.runTransaction((transaction) async {
+      // 1. DATA READ KARO
+      DocumentSnapshot userDoc = await transaction.get(userRef);
+      DocumentSnapshot portfolioDoc = await transaction.get(portfolioRef);
+
+      if (!userDoc.exists) throw Exception("User not found");
+      if (!portfolioDoc.exists) throw Exception("You don't own this coin");
+
+      // 2. CHECK KARO KI KYA UTNE COINS HAIN BHI YA NAHI?
+      double existingQty = (portfolioDoc.get('quantity') as num).toDouble();
+
+      if (existingQty < quantityToSell) {
+        throw Exception(
+          "You only have $existingQty coins. You can't sell $quantityToSell.",
+        );
+      }
+
+      // 3. PAISE WALLET MEIN DAALO (Add to Balance)
+      double currentBalance = (userDoc.get('balance') as num).toDouble();
+      double totalRevenue = currentMarketPrice * quantityToSell;
+
+      double newBalance = currentBalance + totalRevenue;
+      transaction.update(userRef, {'balance': newBalance});
+
+      // 4. PORTFOLIO SE COIN KAATO
+      double remainingQty = existingQty - quantityToSell;
+
+      if (remainingQty == 0) {
+        // Agar saare coins bech diye, toh database se record hi uda do (Clean up)
+        transaction.delete(portfolioRef);
+      } else {
+        // Agar thode coins bache hain, toh sirf quantity update karo
+        // (Note: Buy Price update nahi hota sell karte waqt)
+        transaction.update(portfolioRef, {'quantity': remainingQty});
       }
     });
   }

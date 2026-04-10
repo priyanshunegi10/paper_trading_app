@@ -46,7 +46,6 @@ class MyApp extends StatelessWidget {
               () =>
                   context.read<DashboardProvider>().startListeningToWatchlist(),
             );
-
             return const RootPage();
           } else {
             return const SignUp();

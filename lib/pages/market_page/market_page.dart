@@ -6,6 +6,7 @@ import 'package:paper_trading_app/pages/market_page/action_toggle_button_market.
 import 'package:paper_trading_app/pages/market_page/widgets/stocks_card.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:paper_trading_app/provider/nav_provider.dart';
+import 'package:paper_trading_app/widgets/buy_sell_sheet.dart';
 import 'package:provider/provider.dart';
 
 class MarketPage extends StatefulWidget {
@@ -183,13 +184,29 @@ class _MarketPageState extends State<MarketPage> {
                                       ),
                                     ],
                                   ),
-                                  child: StocksCard(
-                                    imagePath: coin.image,
-                                    shortFormName: coin.symbol,
-                                    stockName: coin.name,
-                                    stockPrice: "\$${coin.current_price}",
-                                    profitLoss:
-                                        "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        isScrollControlled:
+                                            true, // isee keyboard aate hi yei uper ho jayga
+                                        backgroundColor: Colors.transparent,
+                                        context: context,
+                                        builder: (context) {
+                                          return BuySellSheet(
+                                            coinName: coin.name,
+                                            currentPrice: coin.current_price,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: StocksCard(
+                                      imagePath: coin.image,
+                                      shortFormName: coin.symbol,
+                                      stockName: coin.name,
+                                      stockPrice: "\$${coin.current_price}",
+                                      profitLoss:
+                                          "${coin.price_change_percentage_24h > 0 ? "+" : ""}${coin.price_change_percentage_24h.toStringAsFixed(2)}%",
+                                    ),
                                   ),
                                 );
                               },

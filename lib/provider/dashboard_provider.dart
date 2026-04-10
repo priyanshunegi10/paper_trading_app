@@ -112,33 +112,4 @@ class DashboardProvider extends ChangeNotifier {
       return false;
     }
   }
-
-  // BUY COIN FUNCTION
-
-  Future<bool> buyCrypto(
-    String coinId,
-    String symbol,
-    double coinPrice,
-    double quantity,
-  ) async {
-    if (quantity <= 0) {
-      _errorMessage = "Quantity 0 se badi honi chahiye bhai!";
-      notifyListeners();
-      return false;
-    }
-    _isLoading = true;
-    _errorMessage = "";
-    notifyListeners();
-
-    try {
-      await _dbService.buyCoin(coinId, symbol, coinPrice, quantity);
-      return true;
-    } catch (e) {
-      _errorMessage = e.toString().replaceAll("Exception:", "").trim();
-      return false;
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
 }
