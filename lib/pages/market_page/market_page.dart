@@ -193,6 +193,8 @@ class _MarketPageState extends State<MarketPage> {
                                         context: context,
                                         builder: (context) {
                                           return BuySellSheet(
+                                            coinId: coin.id,
+                                            symbol: coin.symbol,
                                             coinName: coin.name,
                                             currentPrice: coin.current_price,
                                           );

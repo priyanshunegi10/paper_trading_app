@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class BuySellSheet extends StatefulWidget {
+  final String coinId;
+  final String symbol;
   final String coinName;
   final double currentPrice;
 
@@ -8,6 +10,8 @@ class BuySellSheet extends StatefulWidget {
     super.key,
     required this.coinName,
     required this.currentPrice,
+    required this.coinId,
+    required this.symbol,
   });
 
   @override
