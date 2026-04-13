@@ -102,12 +102,7 @@ class _BuySellSheetState extends State<BuySellSheet> {
                 TextButton(
                   style: TextButton.styleFrom(backgroundColor: Colors.green),
                   onPressed: () {
-                    // context.watch<DashboardProvider>().buyCrypto(
-                    //   widget.coi,
-                    //   symbol,
-                    //   coinPrice,
-                    //   quantity,
-                    // );
+                    // context.read<PortfolioProvider>().
                   },
                   child: Text("BUY", style: TextStyle(color: Colors.black)),
                 ),

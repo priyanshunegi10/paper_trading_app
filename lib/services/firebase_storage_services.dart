@@ -70,7 +70,7 @@ class FirebaseStorageServices {
     if (user == null) throw Exception("Login fisrt");
 
     // DocumentReference address
-    DocumentReference userRef = _db.collection("users.").doc(user.uid);
+    DocumentReference userRef = _db.collection("users").doc(user.uid);
 
     // Portfolio user ke andar hona chahiye (Sub-collection)
     DocumentReference portfolioRef = userRef
@@ -177,5 +177,22 @@ class FirebaseStorageServices {
         transaction.update(portfolioRef, {'quantity': remainingQty});
       }
     });
+  }
+
+  // portfolio stream (constant portfolio ko dekhta rahega ki usme kya kya changes hei )
+
+  Stream<List<Map<String, dynamic>>> getPortfolioStream() {
+    User? user = _auth.currentUser;
+    if (user == null) throw Exception("Please login first");
+
+    // location kha mere coins honge
+    return _db
+        .collection("users")
+        .doc(user.uid)
+        .collection("portfolio")
+        .snapshots() // firebase direct list nhi bejta hei isliye .map lga kr loop chalaya or list saaf kr di
+        .map((snapshort) {
+          return snapshort.docs.map((doc) => doc.data()).toList();
+        });
   }
 }

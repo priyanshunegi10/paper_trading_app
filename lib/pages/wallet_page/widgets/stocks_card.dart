@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 
 class StocksCard extends StatelessWidget {
-  final String quantity;
-  final String averagePrice;
-  final String currentLossOrProfitInPerce;
   final String name;
-  final String currentLossOrProfit;
-  final String investedAmount;
-  final String priceChangeIn24houres;
-  final String priceChangeIn24houresInPercentage;
+  final double quantity;
+  final double buyPrice;
+  final double currentLivePrice;
+  final double market24hChange;
+  final double market24hChangePercentage;
+
   const StocksCard({
     super.key,
     required this.quantity,
-    required this.averagePrice,
-    required this.currentLossOrProfitInPerce,
     required this.name,
-    required this.currentLossOrProfit,
-    required this.investedAmount,
-    required this.priceChangeIn24houres,
-    required this.priceChangeIn24houresInPercentage,
+    required this.buyPrice,
+    required this.currentLivePrice,
+    required this.market24hChange,
+    required this.market24hChangePercentage,
   });
 
   @override
   Widget build(BuildContext context) {
+    double investedAmount = quantity * buyPrice;
+    double currentValue = quantity * currentLivePrice;
+    double pnl = currentValue - investedAmount;
+    double pnlPercentage = (pnl / investedAmount) * 100;
+
     return Column(
       children: [
         Padding(
@@ -31,9 +33,12 @@ class StocksCard extends StatelessWidget {
             children: [
               Text("Qty. $quantity", style: TextStyle(fontSize: 15)),
               SizedBox(width: 10),
-              Text("• Avg. $averagePrice", style: TextStyle(fontSize: 15)),
+              Text("• Avg. $buyPrice", style: TextStyle(fontSize: 15)),
               Spacer(),
-              Text(currentLossOrProfitInPerce, style: TextStyle(fontSize: 15)),
+              Text(
+                pnlPercentage.toStringAsFixed(2),
+                style: TextStyle(fontSize: 15),
+              ),
             ],
           ),
         ),
@@ -48,7 +53,7 @@ class StocksCard extends StatelessWidget {
               ),
               Spacer(),
               Text(
-                currentLossOrProfit,
+                currentValue.toStringAsFixed(2),
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
@@ -66,11 +71,11 @@ class StocksCard extends StatelessWidget {
             children: [
               Text("Invested", style: TextStyle(fontSize: 15)),
               SizedBox(width: 10),
-              Text(investedAmount),
+              Text(investedAmount.toStringAsFixed(2)),
               Spacer(),
-              Text(priceChangeIn24houres),
+              Text(market24hChange.toStringAsFixed(2)),
               SizedBox(width: 10),
-              Text(priceChangeIn24houresInPercentage),
+              Text(market24hChangePercentage.toStringAsFixed(2)),
             ],
           ),
         ),

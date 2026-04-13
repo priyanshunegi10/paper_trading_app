@@ -17,7 +17,7 @@ class RootPage extends StatelessWidget {
     final List<Widget> _pages = [
       const HomePage(),
       const MarketPage(),
-      const WalletPage(),
+      WalletPage(),
       const ProfilePage(),
     ];
 

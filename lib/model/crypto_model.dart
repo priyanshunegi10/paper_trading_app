@@ -4,6 +4,7 @@ class CryptoModel {
   String name;
   String image;
   double current_price;
+  double price_change_24h;
   double price_change_percentage_24h;
   final List<dynamic> sparkline_in_7d;
 
@@ -13,6 +14,7 @@ class CryptoModel {
     required this.name,
     required this.image,
     required this.current_price,
+    required this.price_change_24h,
     required this.price_change_percentage_24h,
     required this.sparkline_in_7d,
   });
@@ -23,6 +25,7 @@ class CryptoModel {
       symbol: json["symbol"],
       name: json["name"],
       image: json["image"],
+      price_change_24h: (json['price_change_24'] ?? 0).toDouble(),
       current_price: (json['current_price'] ?? 0).toDouble(),
       price_change_percentage_24h: (json['price_change_percentage_24h'] ?? 0)
           .toDouble(),
