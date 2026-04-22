@@ -7,6 +7,7 @@ import 'package:paper_trading_app/pages/home_page/widgets/transactions_widget.da
 import 'package:paper_trading_app/pages/home_page/widgets/watchlist_container.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:paper_trading_app/services/firebase_storage_services.dart';
+import 'package:paper_trading_app/widgets/buy_sell_sheet.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -209,6 +210,23 @@ class HomePage extends StatelessWidget {
                                       final coin = provider.myWatchlist[index];
 
                                       return WatchlistContainer(
+                                        onTap: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isScrollControlled:
+                                                true, // isee keyboard aate hi yei uper ho jayga
+                                            backgroundColor: Colors.transparent,
+                                            builder: (context) {
+                                              return BuySellSheet(
+                                                coinId: coin.id,
+                                                symbol: coin.symbol,
+                                                coinName: coin.name,
+                                                currentPrice:
+                                                    coin.current_price,
+                                              );
+                                            },
+                                          );
+                                        },
                                         isProfit:
                                             coin.price_change_percentage_24h >
                                             0,

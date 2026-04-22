@@ -22,7 +22,6 @@ class PortfolioProvider extends ChangeNotifier {
 
     try {
       await _dbServices.buyCoin(coinId, symbol, coinPrice, quantity);
-      _isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
@@ -30,6 +29,36 @@ class PortfolioProvider extends ChangeNotifier {
       _errorMessage = e.toString();
       notifyListeners();
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> sellCoin(
+    String coinId,
+    double currentMarketPrice,
+    double quantityToSell,
+  ) async {
+    _errorMessage = '';
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _dbServices.sellCoin(
+        coinId,
+        currentMarketPrice,
+        quantityToSell,
+        coinId,
+      );
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

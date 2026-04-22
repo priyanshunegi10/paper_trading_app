@@ -7,6 +7,7 @@ import 'package:paper_trading_app/pages/authentication_page/sign_up.dart';
 import 'package:paper_trading_app/provider/auth_provider.dart';
 import 'package:paper_trading_app/provider/dashboard_provider.dart';
 import 'package:paper_trading_app/provider/nav_provider.dart';
+import 'package:paper_trading_app/provider/portfolio_provider.dart';
 import 'package:paper_trading_app/root_page.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NavProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
         ChangeNotifierProvider(create: (_) => MyAuthProvider()),
+        ChangeNotifierProvider(create: (_) => PortfolioProvider()),
       ],
       child: MyApp(),
     ),

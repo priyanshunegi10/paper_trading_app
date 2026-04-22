@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:paper_trading_app/provider/portfolio_provider.dart';
+import 'package:provider/provider.dart';
 
 class BuySellSheet extends StatefulWidget {
   final String coinId;
@@ -20,7 +22,6 @@ class BuySellSheet extends StatefulWidget {
 
 class _BuySellSheetState extends State<BuySellSheet> {
   final TextEditingController _quantityController = TextEditingController();
-  bool _isBuy = true;
   double _totalPrice = 0.0;
 
   @override
@@ -101,14 +102,82 @@ class _BuySellSheetState extends State<BuySellSheet> {
               children: [
                 TextButton(
                   style: TextButton.styleFrom(backgroundColor: Colors.green),
-                  onPressed: () {
-                    // context.read<PortfolioProvider>().
+                  onPressed: () async {
+                    String stringQuantity = _quantityController.text.trim();
+                    double? doubleQuantity = double.tryParse(stringQuantity);
+
+                    if (doubleQuantity == null || doubleQuantity.isNegative) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please enter a valid quantity!"),
+                        ),
+                      );
+                      return;
+                    }
+                    bool success = await context
+                        .read<PortfolioProvider>()
+                        .buyCoin(
+                          widget.coinId,
+                          widget.symbol,
+                          widget.currentPrice,
+                          doubleQuantity,
+                        );
+
+                    if (success) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Coin bought successfully!"),
+                        ),
+                      );
+                      print("Sach mein Buy successfully hua!");
+                    } else {
+                      String errorMsg = context
+                          .read<PortfolioProvider>()
+                          .errorMessage;
+
+                      print("Firebase Error: $errorMsg");
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Failed: $errorMsg"),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                   child: Text("BUY", style: TextStyle(color: Colors.black)),
                 ),
                 TextButton(
                   style: TextButton.styleFrom(backgroundColor: Colors.red),
-                  onPressed: () {},
+                  onPressed: () async {
+                    String stringQuantity = _quantityController.text.trim();
+                    double? doubleQuantity = double.tryParse(stringQuantity);
+
+                    if (doubleQuantity == null || doubleQuantity.isNegative) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Please enter a valid quantity!"),
+                        ),
+                      );
+                    }
+
+                    bool success = await context
+                        .read<PortfolioProvider>()
+                        .sellCoin(
+                          widget.coinId,
+                          widget.currentPrice,
+                          doubleQuantity!,
+                        );
+
+                    if (success && context.mounted) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Coin sell successfully!")),
+                      );
+                    }
+                    print("sell successfully");
+                  },
                   child: Text("SELL", style: TextStyle(color: Colors.black)),
                 ),
               ],

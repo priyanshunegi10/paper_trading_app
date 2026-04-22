@@ -72,57 +72,71 @@ class FirebaseStorageServices {
     // DocumentReference address
     DocumentReference userRef = _db.collection("users").doc(user.uid);
 
-    // Portfolio user ke andar hona chahiye (Sub-collection)
     DocumentReference portfolioRef = userRef
         .collection("portfolio")
         .doc(coinId);
+    DocumentReference transactionRef = userRef.collection('transactions').doc();
 
-    await _db.runTransaction((transaction) async {
+    return _db.runTransaction((transaction) async {
+      // all the reads
       DocumentSnapshot userDoc = await transaction.get(userRef);
+      DocumentSnapshot portfolioDoc = await transaction.get(portfolioRef);
 
-      if (!userDoc.exists) throw Exception("User not found");
+      // calculations
+      if (!userDoc.exists) throw Exception("User data not found!");
 
       double currentBalance = (userDoc.get('balance') as num).toDouble();
       double totalCost = coinPrice * quantity;
 
       if (currentBalance < totalCost) {
-        throw Exception("You don't have enough money");
+        throw Exception(
+          "Bhai balance kam hai! Total cost: \$${totalCost.toStringAsFixed(2)}",
+        );
       }
-      // 1. PAISE KAATO
-      double newBalance = currentBalance - totalCost;
-      transaction.update(userRef, {'balance': newBalance});
 
-      // 2. PORTFOLIO MEIN COIN DAALO
-      DocumentSnapshot portfolioDoc = await transaction.get(portfolioRef);
+      double newBalance = currentBalance - totalCost;
+
+      // avg price
+
+      double finalQuantity = quantity;
+      double finalBuyPrice = coinPrice;
 
       if (portfolioDoc.exists) {
-        // Average Price Calculation (The real math)
         double existingQty = (portfolioDoc.get('quantity') as num).toDouble();
         double existingBuyPrice = (portfolioDoc.get('buyPrice') as num)
             .toDouble();
-
-        // Purani value + Nayi value ko mila kar naya average nikalna
         double totalExistingValue = existingQty * existingBuyPrice;
         double totalNewValue = quantity * coinPrice;
 
-        double newTotalQty = existingQty + quantity;
-        double newAveragePrice =
-            (totalExistingValue + totalNewValue) / newTotalQty;
+        finalQuantity = existingQty + quantity;
+        finalBuyPrice = (totalExistingValue + totalNewValue) / finalQuantity;
+      }
 
+      // all the writes
+      transaction.update(userRef, {'balance': newBalance});
+      if (portfolioDoc.exists) {
         transaction.update(portfolioRef, {
-          'quantity': newTotalQty,
-          'buyPrice': newAveragePrice, // Naya average price update hoga
+          'quantity': finalQuantity,
+          'buyPrice': finalBuyPrice,
         });
       } else {
-        // Naya coin hai, toh naya record
         transaction.set(portfolioRef, {
           'coinId': coinId,
           'symbol': symbol,
-          'quantity': quantity,
-          'buyPrice': coinPrice,
-          'purchasedAt': FieldValue.serverTimestamp(),
+          'quantity': finalQuantity,
+          'buyPrice': finalBuyPrice,
         });
       }
+
+      transaction.set(transactionRef, {
+        'coinId': coinId,
+        'symbol': symbol,
+        'type': 'BUY',
+        'price': coinPrice,
+        'quantity': quantity,
+        'totalAmount': totalCost,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
     });
   }
 
@@ -131,6 +145,7 @@ class FirebaseStorageServices {
     String coinId,
     double currentMarketPrice,
     double quantityToSell,
+    String symbol,
   ) async {
     User? user = _auth.currentUser;
     if (user == null) throw Exception("Please login first");
@@ -139,43 +154,57 @@ class FirebaseStorageServices {
     DocumentReference portfolioRef = userRef
         .collection("portfolio")
         .doc(coinId);
+    DocumentReference transactionRef = userRef.collection('transactions').doc();
 
-    // FIREBASE TRANSACTION
-    await _db.runTransaction((transaction) async {
-      // 1. DATA READ KARO
-      DocumentSnapshot userDoc = await transaction.get(userRef);
-      DocumentSnapshot portfolioDoc = await transaction.get(portfolioRef);
+    return _db.runTransaction((transcation) async {
+      // Reads
 
-      if (!userDoc.exists) throw Exception("User not found");
-      if (!portfolioDoc.exists) throw Exception("You don't own this coin");
+      DocumentSnapshot userDoc = await transcation.get(userRef);
+      DocumentSnapshot portfolioDoc = await transcation.get(portfolioRef);
 
-      // 2. CHECK KARO KI KYA UTNE COINS HAIN BHI YA NAHI?
-      double existingQty = (portfolioDoc.get('quantity') as num).toDouble();
+      // calculations
 
-      if (existingQty < quantityToSell) {
+      if (!userDoc.exists) throw Exception("User data not found!");
+      if (!portfolioDoc.exists) {
+        throw Exception("Bhai, tere paas ye coin hai hi nahi bechne ke liye!");
+      }
+
+      double currentBalanace = (userDoc.get('balance') as num).toDouble();
+      double existingQuantity = (portfolioDoc.get('quantity') as num)
+          .toDouble();
+
+      if (quantityToSell > existingQuantity) {
         throw Exception(
-          "You only have $existingQty coins. You can't sell $quantityToSell.",
+          "Tere paas sirf $existingQuantity sikke hain, tu $quantityToSell nahi bech sakta!",
         );
       }
 
-      // 3. PAISE WALLET MEIN DAALO (Add to Balance)
-      double currentBalance = (userDoc.get('balance') as num).toDouble();
-      double totalRevenue = currentMarketPrice * quantityToSell;
+      // Paison ko balance mein add karna
 
-      double newBalance = currentBalance + totalRevenue;
-      transaction.update(userRef, {'balance': newBalance});
+      double totalEarned = quantityToSell * currentMarketPrice;
+      double newBalance = currentBalanace + totalEarned;
 
-      // 4. PORTFOLIO SE COIN KAATO
-      double remainingQty = existingQty - quantityToSell;
+      double remainingQuantity = existingQuantity - quantityToSell;
 
-      if (remainingQty == 0) {
-        // Agar saare coins bech diye, toh database se record hi uda do (Clean up)
-        transaction.delete(portfolioRef);
+      // writes
+
+      transcation.update(userRef, {'balance': newBalance});
+
+      if (remainingQuantity > 0) {
+        transcation.update(portfolioRef, {'quantity': remainingQuantity});
       } else {
-        // Agar thode coins bache hain, toh sirf quantity update karo
-        // (Note: Buy Price update nahi hota sell karte waqt)
-        transaction.update(portfolioRef, {'quantity': remainingQty});
+        transcation.delete(portfolioRef);
       }
+
+      transcation.set(transactionRef, {
+        'coinId': coinId,
+        'symbol': symbol,
+        'type': 'SELL',
+        'price': currentMarketPrice,
+        'quantity': quantityToSell,
+        'totalAmount': totalEarned,
+        'timeStamp': FieldValue.serverTimestamp(),
+      });
     });
   }
 
@@ -193,6 +222,25 @@ class FirebaseStorageServices {
         .snapshots() // firebase direct list nhi bejta hei isliye .map lga kr loop chalaya or list saaf kr di
         .map((snapshort) {
           return snapshort.docs.map((doc) => doc.data()).toList();
+        });
+  }
+
+  // transcation kei liye live pipeling
+
+  Stream<List<Map<String, dynamic>>> getTranscationHistory() {
+    User? user = _auth.currentUser;
+    if (user == null) throw Exception("Please login first");
+
+    return _db
+        .collection('users')
+        .doc(user.uid)
+        .collection('transactions')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshort) {
+          return snapshort.docs
+              .map((doc) => doc.data() as Map<String, dynamic>)
+              .toList();
         });
   }
 }
