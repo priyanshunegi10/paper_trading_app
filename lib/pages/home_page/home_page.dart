@@ -271,13 +271,85 @@ class HomePage extends StatelessWidget {
                             ),
 
                             SizedBox(height: 10),
+                            StreamBuilder<List<Map<String, dynamic>>>(
+                              stream: FirebaseStorageServices()
+                                  .getTranscationHistory(),
+                              builder: (context, snapshort) {
+                                if (snapshort.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
 
-                            TransactionsWidget(
-                              imagePath: "assets/icons/man.png",
-                              name: "Priyanshu negi",
-                              dateTime: "01 NOV, 2026",
-                              quantity: "0.036",
-                              profitLoss: "-\$100.00",
+                                var transactions = snapshort.data ?? [];
+
+                                if (transactions.isEmpty) {
+                                  return Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                        "No recent transactions",
+                                        style: TextStyle(
+                                          color: Colors.blueGrey,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+                                return Consumer<DashboardProvider>(
+                                  builder: (context, provider, _) {
+                                    return ListView.builder(
+                                      itemCount: transactions.length,
+                                      shrinkWrap:
+                                          true, // Column ke andar list chalane ke liye
+                                      physics:
+                                          NeverScrollableScrollPhysics(), // Double scroll se bachne ke liye
+                                      itemBuilder: (context, index) {
+                                        var tx = transactions[index];
+
+                                        // date formate
+                                        Timestamp? timeStamp =
+                                            tx['timeStamp'] as Timestamp?;
+
+                                        DateTime date = timeStamp != null
+                                            ? timeStamp.toDate()
+                                            : DateTime.now();
+                                        String formattedDate =
+                                            "${date.day}/${date.month}/${date.year}";
+
+                                        bool isBuy = tx['type'] == 'BUY';
+                                        String qtyText =
+                                            "${isBuy ? '+' : '-'}${tx['quantity']}";
+                                        String totalAmountText =
+                                            "\$${(tx['totalAmount'] as num).toStringAsFixed(2)}";
+
+                                        int coinIndex = provider.cryptoList
+                                            .indexWhere(
+                                              (apicoin) =>
+                                                  apicoin.id == tx['coinId'],
+                                            );
+
+                                        String coinImage = coinIndex != -1
+                                            ? provider
+                                                  .cryptoList[coinIndex]
+                                                  .image
+                                            : "";
+                                        return TransactionsWidget(
+                                          imagePath: coinImage,
+                                          name:
+                                              "${tx['symbol'].toUpperCase()} (${tx['type']})",
+                                          dateTime: formattedDate,
+                                          quantity: qtyText,
+                                          profitLoss: totalAmountText,
+                                          isBuy: isBuy,
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
                             ),
 
                             SizedBox(height: 25),

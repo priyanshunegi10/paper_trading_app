@@ -61,4 +61,22 @@ class PortfolioProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> resetAccount() async {
+    _isLoading = true;
+    _errorMessage = "";
+    notifyListeners();
+
+    try {
+      await _dbServices.resetAccount();
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      notifyListeners();
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

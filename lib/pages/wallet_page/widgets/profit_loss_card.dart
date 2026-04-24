@@ -5,12 +5,14 @@ class ProfitLossCard extends StatelessWidget {
   final String currentAmount;
   final String currentProfitLoss;
   final String currnetProfitLossPercentange;
+  final bool isProfit;
   const ProfitLossCard({
     super.key,
     required this.investedAmount,
     required this.currentAmount,
     required this.currentProfitLoss,
     required this.currnetProfitLossPercentange,
+    required this.isProfit,
   });
 
   @override
@@ -58,13 +60,13 @@ class ProfitLossCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.w600,
-                  color: Colors.red,
+                  color: isProfit ? Colors.green : Colors.red,
                 ),
               ),
               SizedBox(width: 5),
               Text(
                 currnetProfitLossPercentange,
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: isProfit ? Colors.green : Colors.red),
               ),
             ],
           ),

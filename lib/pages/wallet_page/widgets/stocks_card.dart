@@ -7,7 +7,7 @@ class StocksCard extends StatelessWidget {
   final double currentLivePrice;
   final double market24hChange;
   final double market24hChangePercentage;
-
+  final bool isProfit;
   const StocksCard({
     super.key,
     required this.quantity,
@@ -16,6 +16,7 @@ class StocksCard extends StatelessWidget {
     required this.currentLivePrice,
     required this.market24hChange,
     required this.market24hChangePercentage,
+    required this.isProfit,
   });
 
   @override
@@ -28,21 +29,28 @@ class StocksCard extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
           child: Row(
             children: [
               Text("Qty. $quantity", style: TextStyle(fontSize: 15)),
-              SizedBox(width: 10),
-              Text("• Avg. $buyPrice", style: TextStyle(fontSize: 15)),
+              SizedBox(width: 15),
+              Text(
+                "• Avg. ${buyPrice.toStringAsFixed(2)}",
+                style: TextStyle(fontSize: 15),
+              ),
+
               Spacer(),
               Text(
-                pnlPercentage.toStringAsFixed(2),
-                style: TextStyle(fontSize: 15),
+                "${pnlPercentage.toStringAsFixed(2)}%",
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isProfit ? Colors.green : Colors.red,
+                ),
               ),
             ],
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 5 ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Row(
@@ -57,14 +65,14 @@ class StocksCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: Colors.green,
+                  color: isProfit ? Colors.green : Colors.red,
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 5),
             ],
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 5),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Row(
@@ -75,7 +83,10 @@ class StocksCard extends StatelessWidget {
               Spacer(),
               Text(market24hChange.toStringAsFixed(2)),
               SizedBox(width: 10),
-              Text(market24hChangePercentage.toStringAsFixed(2)),
+              Text(
+                "${market24hChangePercentage.toStringAsFixed(2)}%",
+                style: TextStyle(color: isProfit ? Colors.green : Colors.red),
+              ),
             ],
           ),
         ),

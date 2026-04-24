@@ -215,6 +215,7 @@ class FirebaseStorageServices {
     if (user == null) throw Exception("Please login first");
 
     // location kha mere coins honge
+
     return _db
         .collection("users")
         .doc(user.uid)
@@ -238,9 +239,30 @@ class FirebaseStorageServices {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshort) {
-          return snapshort.docs
-              .map((doc) => doc.data() as Map<String, dynamic>)
-              .toList();
+          return snapshort.docs.map((doc) => doc.data()).toList();
         });
+  }
+
+  // Reset account
+
+  Future<void> resetAccount() async {
+    User? user = _auth.currentUser;
+
+    if (user == null) throw Exception("Please login first");
+
+    DocumentReference userRef = _db.collection("users").doc(user.uid);
+
+    await userRef.update({"balance": 100000.0});
+
+    var portfolioDocs = await userRef.collection("portfolio").get();
+
+    for (var doc in portfolioDocs.docs) {
+      await doc.reference.delete();
+    }
+
+    var txDocs = await userRef.collection("transactions").get();
+    for (var doc in txDocs.docs) {
+      await doc.reference.delete();
+    }
   }
 }

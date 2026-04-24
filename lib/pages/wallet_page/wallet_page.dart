@@ -84,7 +84,7 @@ class WalletPage extends StatelessWidget {
                         double totalPnlPercentage = totalInvested > 0
                             ? (totalPnl / totalInvested) * 100
                             : 0.0;
-
+                        bool isProfit = totalPnl > 0;
                         return Column(
                           children: [
                             ProfitLossCard(
@@ -96,6 +96,7 @@ class WalletPage extends StatelessWidget {
                                   "${totalPnl >= 0 ? '+' : ''}\$${totalPnl.toStringAsFixed(2)}",
                               currnetProfitLossPercentange:
                                   "(${totalPnl >= 0 ? '+' : ''}${totalPnlPercentage.toStringAsFixed(2)}%)",
+                              isProfit: isProfit,
                             ),
 
                             const SizedBox(height: 20),
@@ -118,13 +119,20 @@ class WalletPage extends StatelessWidget {
                                 double livePrice = liveCoinData != null
                                     ? liveCoinData.current_price
                                     : 0.0;
-                                double marketChange = liveCoinData != null
-                                    ? liveCoinData.price_change_24h
+                                double currentPrice = liveCoinData != null
+                                    ? liveCoinData.current_price
                                     : 0.0;
                                 double marketChangePer = liveCoinData != null
                                     ? liveCoinData.price_change_percentage_24h
                                     : 0.0;
+                                double stockQty = dbCoin['quantity'];
+                                double buyPrice = dbCoin['buyPrice'];
 
+                                double investedAmount = stockQty * buyPrice;
+                                double doubleMarketChange = currentPrice;
+
+                                bool isProfit =
+                                    investedAmount > doubleMarketChange;
                                 return StocksCard(
                                   quantity: (dbCoin['quantity'] as num)
                                       .toDouble(),
@@ -132,8 +140,9 @@ class WalletPage extends StatelessWidget {
                                   buyPrice: (dbCoin['buyPrice'] as num)
                                       .toDouble(),
                                   currentLivePrice: livePrice,
-                                  market24hChange: marketChange,
+                                  market24hChange: currentPrice,
                                   market24hChangePercentage: marketChangePer,
+                                  isProfit: isProfit,
                                 );
                               },
                             ),
