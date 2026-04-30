@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:paper_trading_app/services/firebase_storage_services.dart';
 
@@ -27,26 +26,29 @@ class CustomAppBar extends StatelessWidget {
                 ],
               ),
 
-              // StreamBuilder<DocumentSnapshot>(
-              //   stream: FirebaseStorageServices().getUserProfile(),
-              //   builder: (context, snapshort) {
-              //     if (snapshort.connectionState == ConnectionState.waiting) {
-              //       return Center(child: CircularProgressIndicator());
-              //     }
-
-              //     if (snapshort.hasData && snapshort.data!.exists) {
-              //       String _userName = snapshort.data!.get('');
-              //     }
-              Text(
-                "Priyanshu negi",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
+              StreamBuilder(
+                stream: FirebaseStorageServices().getUserProfile(),
+                builder: (context, snapshort) {
+                  if (snapshort.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (snapshort.hasData && snapshort.data!.exists) {
+                    String currentName = snapshort.data!.get('name');
+                    return Text(
+                      currentName,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  }
+                  return Text(
+                    "",
+                    style: TextStyle(fontSize: 40, color: Colors.black),
+                  );
+                },
               ),
-              //   },
-              // ),
             ],
           ),
           Spacer(),

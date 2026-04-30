@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 class CustomButton extends StatelessWidget {
   final String title;
   final VoidCallback? ontap;
@@ -15,13 +14,13 @@ class CustomButton extends StatelessWidget {
 
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.blue,
+          color: Colors.blue.shade600,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Center(
           child: Text(
             title,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         ),
       ),

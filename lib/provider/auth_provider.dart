@@ -10,12 +10,12 @@ class MyAuthProvider extends ChangeNotifier {
   String get errorMessage => _errorMessage;
   bool get isloading => _isLoading;
 
-  Future<bool> signUp(String email, String password) async {
+  Future<bool> signUp(String email, String password , String name) async {
     _isLoading = true;
     _errorMessage = "";
     notifyListeners();
     try {
-      await _authSevices.signupWithEmail(email, password);
+      await _authSevices.signupWithEmail(email, password ,name );
       _isLoading = false;
       notifyListeners();
       return true;
