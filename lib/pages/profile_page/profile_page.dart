@@ -103,12 +103,14 @@ class ProfilePage extends StatelessWidget {
                           balance = (snapshot.data!.get('balance') as num)
                               .toDouble();
                         }
-                        return Text(
-                          "\$${balance.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                        return Flexible(
+                          child: Text(
+                            "\$${balance.toStringAsFixed(2)}",
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
                           ),
                         );
                       },
